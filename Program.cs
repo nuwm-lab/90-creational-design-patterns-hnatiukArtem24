@@ -2,7 +2,7 @@ using System;
 
 namespace AirplaneBuilderPattern
 {
-    // Продукт
+
     public class Airplane
     {
         public string Engine { get; set; }
@@ -19,7 +19,7 @@ namespace AirplaneBuilderPattern
         }
     }
 
-    // Інтерфейс будівельника
+
     public interface IAirplaneBuilder
     {
         void SetEngine();
@@ -28,7 +28,6 @@ namespace AirplaneBuilderPattern
         Airplane GetResult();
     }
 
-    // Конкретний будівельник — пасажирський літак
     public class PassengerAirplaneBuilder : IAirplaneBuilder
     {
         private Airplane airplane = new Airplane();
@@ -54,7 +53,7 @@ namespace AirplaneBuilderPattern
         }
     }
 
-    // Конкретний будівельник — вантажний літак
+
     public class CargoAirplaneBuilder : IAirplaneBuilder
     {
         private Airplane airplane = new Airplane();
@@ -80,7 +79,7 @@ namespace AirplaneBuilderPattern
         }
     }
 
-    // Директор
+
     public class AirplaneDirector
     {
         public void Construct(IAirplaneBuilder builder)
@@ -91,7 +90,7 @@ namespace AirplaneBuilderPattern
         }
     }
 
-    // Тестова програма
+
     class Program
     {
         static void Main(string[] args)
