@@ -1,121 +1,121 @@
 using System;
 
-// Клас продукту
-class Airplane
+namespace AirplaneBuilderPattern
 {
-    public string Engine { get; set; }
-    public string Wings { get; set; }
-    public string Interior { get; set; }
-
-    public override string ToString()
+    // Продукт
+    public class Airplane
     {
-        return $"Літак з двигуном: {Engine}, крилами: {Wings}, інтер'єром: {Interior}";
-    }
-}
+        public string Engine { get; set; }
+        public string Wings { get; set; }
+        public string Interior { get; set; }
 
-// Абстрактний будівельник
-abstract class AirplaneBuilder
-{
-    protected Airplane airplane;
-
-    public void CreateNewAirplane()
-    {
-        airplane = new Airplane();
+        public void ShowInfo()
+        {
+            Console.WriteLine("----- Літак створено -----");
+            Console.WriteLine($"Двигун: {Engine}");
+            Console.WriteLine($"Крила: {Wings}");
+            Console.WriteLine($"Інтер'єр: {Interior}");
+            Console.WriteLine();
+        }
     }
 
-    public Airplane GetAirplane()
+    // Інтерфейс будівельника
+    public interface IAirplaneBuilder
     {
-        return airplane;
+        void SetEngine();
+        void SetWings();
+        void SetInterior();
+        Airplane GetResult();
     }
 
-    public abstract void SetEngine();
-    public abstract void SetWings();
-    public abstract void SetInterior();
-}
-
-// Конкретний будівельник – Пасажирський літак
-class PassengerAirplaneBuilder : AirplaneBuilder
-{
-    public override void SetEngine()
+    // Конкретний будівельник — пасажирський літак
+    public class PassengerAirplaneBuilder : IAirplaneBuilder
     {
-        airplane.Engine = "Двигун Rolls-Royce";
+        private Airplane airplane = new Airplane();
+
+        public void SetEngine()
+        {
+            airplane.Engine = "Двигун Rolls-Royce Trent 1000";
+        }
+
+        public void SetWings()
+        {
+            airplane.Wings = "Крила зі збільшеним розмахом";
+        }
+
+        public void SetInterior()
+        {
+            airplane.Interior = "Інтер'єр: 220 пасажирських місць";
+        }
+
+        public Airplane GetResult()
+        {
+            return airplane;
+        }
     }
 
-    public override void SetWings()
+    // Конкретний будівельник — вантажний літак
+    public class CargoAirplaneBuilder : IAirplaneBuilder
     {
-        airplane.Wings = "Довгі крила для економії палива";
+        private Airplane airplane = new Airplane();
+
+        public void SetEngine()
+        {
+            airplane.Engine = "Двигун GE90-115B (найпотужніший у світі)";
+        }
+
+        public void SetWings()
+        {
+            airplane.Wings = "Посилені крила для важких навантажень";
+        }
+
+        public void SetInterior()
+        {
+            airplane.Interior = "Інтер'єр: вантажний відсік на 70 тонн";
+        }
+
+        public Airplane GetResult()
+        {
+            return airplane;
+        }
     }
 
-    public override void SetInterior()
+    // Директор
+    public class AirplaneDirector
     {
-        airplane.Interior = "Комфортний салон для 180 пасажирів";
-    }
-}
-
-// Конкретний будівельник – Військовий літак
-class FighterAirplaneBuilder : AirplaneBuilder
-{
-    public override void SetEngine()
-    {
-        airplane.Engine = "Реактивний двигун GE F110";
+        public void Construct(IAirplaneBuilder builder)
+        {
+            builder.SetEngine();
+            builder.SetWings();
+            builder.SetInterior();
+        }
     }
 
-    public override void SetWings()
+    // Тестова програма
+    class Program
     {
-        airplane.Wings = "Короткі маневрові крила";
-    }
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Оберіть тип літака:");
+            Console.WriteLine("1 — Пасажирський");
+            Console.WriteLine("2 — Вантажний");
+            Console.Write("Ваш вибір: ");
+            int choice = int.Parse(Console.ReadLine());
 
-    public override void SetInterior()
-    {
-        airplane.Interior = "Кабіна одного пілота з HUD-дисплеєм";
-    }
-}
+            IAirplaneBuilder builder;
 
-// Директор, який керує процесом створення літака
-class AirplaneDesigner
-{
-    private AirplaneBuilder builder;
+            if (choice == 1)
+                builder = new PassengerAirplaneBuilder();
+            else
+                builder = new CargoAirplaneBuilder();
 
-    public void SetBuilder(AirplaneBuilder b)
-    {
-        builder = b;
-    }
+            AirplaneDirector director = new AirplaneDirector();
+            director.Construct(builder);
 
-    public Airplane GetAirplane()
-    {
-        return builder.GetAirplane();
-    }
+            Airplane airplane = builder.GetResult();
+            airplane.ShowInfo();
 
-    public void ConstructAirplane()
-    {
-        builder.CreateNewAirplane();
-        builder.SetEngine();
-        builder.SetWings();
-        builder.SetInterior();
-    }
-}
-
-// Демонстрація
-class Program
-{
-    static void Main(string[] args)
-    {
-        AirplaneDesigner designer = new AirplaneDesigner();
-
-        // Побудова пасажирського літака
-        AirplaneBuilder passengerBuilder = new PassengerAirplaneBuilder();
-        designer.SetBuilder(passengerBuilder);
-        designer.ConstructAirplane();
-        Airplane passenger = designer.GetAirplane();
-        Console.WriteLine(passenger);
-
-        // Побудова військового літака
-        AirplaneBuilder fighterBuilder = new FighterAirplaneBuilder();
-        designer.SetBuilder(fighterBuilder);
-        designer.ConstructAirplane();
-        Airplane fighter = designer.GetAirplane();
-        Console.WriteLine(fighter);
-
-        Console.ReadKey();
+            Console.ReadKey();
+        }
     }
 }
